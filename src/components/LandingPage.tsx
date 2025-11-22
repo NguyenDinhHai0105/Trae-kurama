@@ -54,6 +54,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onTryDemo }) => {
     };
   }, []);
 
+  const cleanUrl = (url: string | undefined) => {
+    if (!url) return undefined;
+    return url.replace(/[`'"\s]/g, '').trim();
+  };
+
   const testimonials = [
     {
       name: "Sarah Chen",
@@ -182,11 +187,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onTryDemo }) => {
                   <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">{t.title}</h3>
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => onTryDemo(t.url)}
+                      onClick={() => onTryDemo(cleanUrl(t.url))}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >Open Feed</button>
                     <a
-                      href={t.url}
+                      href={cleanUrl(t.url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 py-2 bg-white text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"

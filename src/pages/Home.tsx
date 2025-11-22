@@ -19,9 +19,15 @@ export default function Home({ onBackToLanding, initialFeedUrl }: HomeProps) {
         setLoading(true);
         try {
           const feedArticles = await parseRSSFeed(initialFeedUrl);
-          setArticles(feedArticles);
-          setIsCustomFeed(true);
-          setRssUrl(initialFeedUrl);
+          if (feedArticles.length) {
+            setArticles(feedArticles);
+            setIsCustomFeed(true);
+            setRssUrl(initialFeedUrl);
+          } else {
+            const sampleArticles = getSampleArticles();
+            setArticles(sampleArticles);
+            setIsCustomFeed(false);
+          }
         } catch (e) {
           const sampleArticles = getSampleArticles();
           setArticles(sampleArticles);

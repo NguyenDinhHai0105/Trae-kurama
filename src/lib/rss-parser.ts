@@ -9,8 +9,10 @@ export interface Article {
 
 export const parseRSSFeed = async (feedUrl: string): Promise<Article[]> => {
   try {
+    const cleaned = (feedUrl || '').replace(/[`'"\s]/g, '').trim();
+    if (!cleaned) return [];
     // Use a proxy service to avoid CORS issues in the browser
-    const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+    const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(cleaned)}`;
     const response = await fetch(proxyUrl);
     const data = await response.json();
     
@@ -18,7 +20,7 @@ export const parseRSSFeed = async (feedUrl: string): Promise<Article[]> => {
       return [];
     }
     
-    return data.items.map((item: any) => {
+    const mapped = data.items.map((item: any) => {
       // Extract category from various possible fields
       const category = item.categories?.[0] || 
                       item.category || 
@@ -73,9 +75,13 @@ export const parseRSSFeed = async (feedUrl: string): Promise<Article[]> => {
         imageUrl
       };
     });
+    if (!mapped.length) {
+      return getSampleArticles();
+    }
+    return mapped;
   } catch (error) {
     console.error('Error parsing RSS feed:', error);
-    return [];
+    return getSampleArticles();
   }
 };
 
